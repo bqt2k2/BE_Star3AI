@@ -1,21 +1,17 @@
 import express from "express";
 import {
-  updateSchedule,
-  deleteSchedule,
-  getScheduledPosts,
   createSchedule,
-  postToFacebookNow,
+  updateSchedule,
+  cancelSchedule,
+  getAllSchedules,
 } from "../controllers/scheduleController";
 import { authMiddleware } from "../middleware/authMiddleware";
 
 const router = express.Router();
 
-router.patch("/update_schedule/:post_id", authMiddleware, updateSchedule);
-router.delete("/delete_schedule/:post_id", authMiddleware, deleteSchedule);
-router.get("/scheduled_posts", authMiddleware, getScheduledPosts);
-
-// 🆕 Thêm mới:
-router.post("/create_schedule", authMiddleware, createSchedule);
-router.post("/create_now/facebook", authMiddleware, postToFacebookNow);
+router.post("/:postId", authMiddleware, createSchedule);
+router.put("/:postId", authMiddleware, updateSchedule);
+router.delete("/:postId", authMiddleware, cancelSchedule);
+router.get("/", authMiddleware, getAllSchedules);
 
 export default router;

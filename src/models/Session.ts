@@ -1,22 +1,27 @@
-// src/models/Session.ts
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface ISession extends Document {
-  user: mongoose.Types.ObjectId;
-  name: string;
-  platform: string; // vd: facebook, tiktok
-  type: string; // photo, video, text
-  createdAt: Date;
+  userId: mongoose.Types.ObjectId;
+  platform: string;
+  type: string;
+  status: "PENDING"|"CREATED" | "GENERATED" | "DONE";
+  title: string; // prompt đầu tiên
 }
 
-const sessionSchema = new Schema<ISession>(
+const SessionSchema = new Schema<ISession>(
   {
-    user: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    name: { type: String, required: true },
+    userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     platform: { type: String, required: true },
     type: { type: String, required: true },
+    title: { type: String, required: true },
+    status: {
+      type: String,
+  enum: ["PENDING", "GENERATING", "GENERATED", "FAILED"],
+  default: "PENDING",
+    },
   },
   { timestamps: true }
 );
 
-export default mongoose.model<ISession>("Session", sessionSchema);
+export default mongoose.models.Session ||
+  mongoose.model<ISession>("Session", SessionSchema);

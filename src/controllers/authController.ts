@@ -40,7 +40,7 @@ export const login = async (req: Request, res: Response) => {
         const accessToken = jwt.sign(
             { id: user._id },
             process.env.JWT_SECRET!,
-            { expiresIn: "15m" }
+            { expiresIn: "60m" }
         );
 
         const refreshToken = jwt.sign(
@@ -70,7 +70,7 @@ export const refresh = async (req: Request, res: Response) => {
         const accessToken = jwt.sign(
             { id: (decoded as any).id },
             process.env.JWT_SECRET!,
-            { expiresIn: "15m" }
+            { expiresIn: "60m" }
         );
         return res.json({ accessToken });
     } catch (err) {

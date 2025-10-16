@@ -1,36 +1,30 @@
-import { Schema, model, Document, Types } from "mongoose";
+import { Schema, model, models, Document, Types } from "mongoose";
 
 export interface ISchedule extends Document {
-  group_id: Types.ObjectId; // tham chiếu đến PostGroup
-  post_index: number; // vị trí post trong mảng posts
-  user_id: Types.ObjectId; // người sở hữu
-  content: {
-    content: string;
-    image_url: string;
-  };
-  time: Date;
-  provider_id: string;
-  status: "PENDING" | "POSTED" | "FAILED";
+  userId: Types.ObjectId;
+  sessionId: Types.ObjectId;
+  postId: Types.ObjectId;
+  scheduledTime: Date;
+  status: "PENDING" | "POSTED" | "CANCELLED";
+  accountId: { type: Schema.Types.ObjectId, ref: "Account", required: true },
+
 }
 
 const ScheduleSchema = new Schema<ISchedule>(
   {
-    group_id: { type: Schema.Types.ObjectId, ref: "PostGroup", required: true },
-    post_index: { type: Number, required: true },
-    user_id: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    content: {
-      content: { type: String, required: true },
-      image_url: { type: String, required: true },
-    },
-    time: { type: Date, required: true },
-    provider_id: { type: String, required: true },
+    userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    sessionId: { type: Schema.Types.ObjectId, ref: "Session", required: true },
+    postId: { type: Schema.Types.ObjectId, ref: "Post", required: true },
+    accountId: { type: Schema.Types.ObjectId, ref: "Account", required: true }, // 🔥 NEW
+    scheduledTime: { type: Date, required: true },
     status: {
       type: String,
-      enum: ["PENDING", "POSTED", "FAILED"],
+      enum: ["PENDING", "POSTED", "CANCELLED"],
       default: "PENDING",
     },
   },
   { timestamps: true }
 );
 
-export const Schedule = model<ISchedule>("Schedule", ScheduleSchema);
+
+export default models.Schedule || model<ISchedule>("Schedule", ScheduleSchema);
